@@ -1,0 +1,4 @@
+#MicroXplorer Project settings
+# This file has an unrecognized MCU string
+Mcu.UserName=ESP32S3-WROOM
+RCC.HCLKFreq_Value=240000000

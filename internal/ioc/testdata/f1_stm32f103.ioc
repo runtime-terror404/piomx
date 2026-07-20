@@ -1,0 +1,3 @@
+#MicroXplorer Project settings
+Mcu.UserName=STM32F103C8Tx
+RCC.HCLKFreq_Value=72000000

@@ -1,0 +1,40 @@
+linters:
+  enable:
+    - depguard
+    - forbidigo
+    - gofumpt
+    - staticcheck
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+
+linters-settings:
+  depguard:
+    rules:
+      cli-boundary:
+        files:
+          - "cmd/cli/**"
+        deny:
+          - pkg: "github.com/runtime-terror404/pio-scaffold/internal/core"
+            desc: "cmd/cli must go through internal/actions"
+          - pkg: "github.com/runtime-terror404/pio-scaffold/internal/ioc"
+            desc: "cmd/cli must go through internal/actions"
+          - pkg: "github.com/runtime-terror404/pio-scaffold/internal/generate"
+            desc: "cmd/cli must go through internal/actions"
+          - pkg: "github.com/runtime-terror404/pio-scaffold/internal/writer"
+            desc: "cmd/cli must go through internal/actions"
+          - pkg: "github.com/runtime-terror404/pio-scaffold/internal/lockfile"
+            desc: "cmd/cli must go through internal/actions"
+  forbidigo:
+    analyze-types: true
+    forbid:
+      - p: ^fmt\.Print.*$
+        msg: "Use cmd/cli-level printing; actions must return data"
+
+issues:
+  exclude-rules:
+    - path: cmd/cli/
+      linters:
+        - forbidigo
+      text: "Use cmd/cli-level printing"

@@ -1,17 +1,45 @@
-# Python
-__pycache__/
-*.pyc
+# Go binary
+/pio-scaffold
+/dist/
 
-# PlatformIO
+# Coverage
+cover.out
+
+# Test artifacts
+/test/
+
+# Prevent accidental root scaffold
+/.pio-scaffold.lock.yml
+/platformio.ini
+/swo_trace.py
+/INSTRUCTIONS.md
+
+# PlatformIO build
 .pio/
 
 # IDE / editor
 .vscode/
+.idea/
 
-# Test artifacts
-report*.md
-CLAUDE.md
+# OS
+.DS_Store
+Thumbs.db
 
-refactor_instruction/
-graphify-out/
+# Accidental dotfile leaks
+.bash_profile
+.bashrc
+.gitconfig
+.gitmodules
+.mcp.json
+.profile
+.ripgreprc
+.zprofile
+.zshrc
+
+# Legacy Python code (archived)
 old_python/
+
+# dont touch i put this here
+CLAUDE.md
+refactor_instruction/
+.claude/

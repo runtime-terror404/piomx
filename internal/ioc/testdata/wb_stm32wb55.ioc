@@ -1,0 +1,3 @@
+#MicroXplorer Project settings
+Mcu.UserName=STM32WB55RGVx
+RCC.HCLKFreq_Value=64000000

@@ -1,0 +1,3 @@
+#MicroXplorer Project settings
+Mcu.UserName=STM32G474RETx
+RCC.HCLKFreq_Value=170000000
