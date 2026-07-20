@@ -10,3 +10,8 @@ __pycache__/
 
 # Test artifacts
 report*.md
+CLAUDE.md
+
+refactor_instruction/
+graphify-out/
+old_python/

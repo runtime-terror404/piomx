@@ -1,4 +1,0 @@
-#!/usr/bin/env python3
-from pio_scaffold.cli import app
-
-app()
