@@ -22,18 +22,18 @@ const (
 
 // LockFile represents the on-disk lock file schema.
 type LockFile struct {
-	SchemaVersion int              `yaml:"schemaVersion"`
-	Generator     GeneratorInfo    `yaml:"generator"`
-	Platform      string           `yaml:"platform"`
-	Config        LockFileConfig   `yaml:"config"`
-	Files         []LockFileEntry  `yaml:"files"`
+	SchemaVersion int             `yaml:"schemaVersion"`
+	Generator     GeneratorInfo   `yaml:"generator"`
+	Platform      string          `yaml:"platform"`
+	Config        LockFileConfig  `yaml:"config"`
+	Files         []LockFileEntry `yaml:"files"`
 }
 
 // GeneratorInfo records which binary wrote this lock file.
 type GeneratorInfo struct {
-	Tool             string `yaml:"tool"`
-	Version          string `yaml:"version"`
-	GeneratedAtUnix  int64  `yaml:"generatedAtUnix"`
+	Tool            string `yaml:"tool"`
+	Version         string `yaml:"version"`
+	GeneratedAtUnix int64  `yaml:"generatedAtUnix"`
 }
 
 // LockFileConfig holds the key configuration values for the scaffolded project.

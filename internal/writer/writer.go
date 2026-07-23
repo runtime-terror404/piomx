@@ -19,9 +19,9 @@ import (
 type WriteDecision int
 
 const (
-	DecisionWrite          WriteDecision = iota // safe to write (fresh or hash-match)
-	DecisionSkipUntracked                       // file exists, no lock file present
-	DecisionSkipDrift                           // file exists, hash doesn't match lock
+	DecisionWrite         WriteDecision = iota // safe to write (fresh or hash-match)
+	DecisionSkipUntracked                      // file exists, no lock file present
+	DecisionSkipDrift                          // file exists, hash doesn't match lock
 )
 
 // PlannedWrite holds the plan for a single generated file.

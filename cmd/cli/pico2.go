@@ -22,8 +22,6 @@ func newPico2Command() *cobra.Command {
 		libs         string
 		git          bool
 		ci           bool
-		force        bool
-		adopt        bool
 	)
 
 	cmd := &cobra.Command{
@@ -37,29 +35,27 @@ func newPico2Command() *cobra.Command {
 				return err
 			}
 
-			pico2Cfg := &actions.Pico2Config{
-				Board:        board,
-				Framework:    framework,
-				Core:         coreFlag,
-				Environments: environments,
-				Baud:         baud,
-				Log:          logSetting,
-				Libs:         libList,
-			}
+			parent := cmd.Root()
 
 			req := actions.ScaffoldRequest{
 				Platform: core.PlatformPico2,
-				Pico2:    pico2Cfg,
-				Git:      git,
-				CI:       ci,
-				Force:    force,
-				Adopt:    adopt,
+				Pico2: &actions.Pico2Config{
+					Board:        board,
+					Framework:    framework,
+					Core:         coreFlag,
+					Environments: environments,
+					Baud:         baud,
+					Log:          logSetting,
+					Libs:         libList,
+				},
+				Git:   git,
+				CI:    ci,
 			}
 
-			// Read global persistent flags from the root command.
-			parent := cmd.Root()
 			req.ProjectDir, _ = parent.PersistentFlags().GetString("project-dir")
 			req.DryRun, _ = parent.PersistentFlags().GetBool("dry-run")
+			req.Force, _ = parent.PersistentFlags().GetBool("force")
+			req.Adopt, _ = parent.PersistentFlags().GetBool("adopt")
 			yes, _ := parent.PersistentFlags().GetBool("yes")
 			req.Name, _ = parent.PersistentFlags().GetString("name")
 			presetName, _ := parent.PersistentFlags().GetString("preset")
@@ -74,6 +70,10 @@ func newPico2Command() *cobra.Command {
 					fmt.Println("Aborted.")
 					return nil
 				}
+			}
+
+			if err := runPreFlight(&req, req.ProjectDir); err != nil {
+				return nil
 			}
 
 			result, err := actions.Scaffold(context.Background(), req)
@@ -93,11 +93,9 @@ func newPico2Command() *cobra.Command {
 	cmd.Flags().BoolVar(&log, "log", false, "Add monitor_filters (timestamp + log2file)")
 	cmd.Flags().BoolVar(&noLog, "no-log", false, "Explicitly disable monitor_filters")
 	cmd.MarkFlagsMutuallyExclusive("log", "no-log")
-	cmd.Flags().StringVarP(&libs, "libs", "l", "", "Comma-separated lib_deps")
+	cmd.Flags().StringVarP(&libs, "libs", "l", "", "PlatformIO libraries (e.g. SPI, Wire, Adafruit NeoPixel)")
 	cmd.Flags().BoolVar(&git, "git", false, "Initialize git repository")
 	cmd.Flags().BoolVar(&ci, "ci", false, "Generate GitHub Actions CI workflow")
-	cmd.Flags().BoolVar(&force, "force", false, "Overwrite files even if drift detected")
-	cmd.Flags().BoolVar(&adopt, "adopt", false, "Create lock file for existing project without modifying content")
 
 	return cmd
 }

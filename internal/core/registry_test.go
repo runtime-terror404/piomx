@@ -9,8 +9,8 @@ import (
 // be zero-valued across all entries. Add a field here only when it genuinely
 // varies per-entry and some entries intentionally leave it empty.
 var intentionallyOptionalFields = map[string]bool{
-	"Board.ExtraINI":          true, // only some boards override ExtraINI
-	"Board.UploadMaximumSize": true, // 0 means "omit from ini" (e.g. pico)
+	"Board.ExtraINI":              true, // only some boards override ExtraINI
+	"Board.UploadMaximumSize":     true, // 0 means "omit from ini" (e.g. pico)
 	"DebugProbe.OpenOCDTargetFmt": true, // has a default in the generator
 }
 

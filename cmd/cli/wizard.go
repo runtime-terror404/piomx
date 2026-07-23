@@ -15,11 +15,12 @@ import (
 
 // wizardResult holds the output of the interactive wizard.
 type wizardResult struct {
-	Platform core.PlatformKey
-	Pico2    *actions.Pico2Config
-	STM32    *actions.STM32Config
-	Git      bool
-	CI       bool
+	Platform    core.PlatformKey
+	Pico2       *actions.Pico2Config
+	STM32       *actions.STM32Config
+	Git         bool
+	CI          bool
+	detectedMCU string // set by wizardSTM32 when .ioc is parsed
 }
 
 // runWizard runs the interactive wizard and returns the collected config.
@@ -41,11 +42,15 @@ func runWizard(projectDir string) (*wizardResult, error) {
 	case core.PlatformPico2:
 		result.Pico2 = wizardPico2(scanner, projectDir)
 	case core.PlatformSTM32:
-		result.STM32 = wizardSTM32(scanner, projectDir)
+		result.STM32 = wizardSTM32(scanner, projectDir, result)
+		if result.STM32 == nil {
+			fmt.Println("Aborted.")
+			os.Exit(0)
+		}
 	}
 
 	// Common options.
-	libsStr := prompt(scanner, "Library dependencies (comma-separated, or empty)", "")
+	libsStr := prompt(scanner, "Add PlatformIO libraries? (e.g. SPI, Wire, Adafruit NeoPixel — press Enter to skip)", "")
 	var libs []string
 	for _, lib := range strings.Split(libsStr, ",") {
 		lib = strings.TrimSpace(lib)
@@ -84,11 +89,10 @@ func wizardPico2(scanner *bufio.Scanner, projectDir string) *actions.Pico2Config
 	// Board selection.
 	reg := core.Pico2Registry{}
 	boards := reg.Boards()
-	boardIDs := make([]string, 0, len(boards))
-	boardNames := make([]string, 0, len(boards))
-	for id, b := range boards {
-		boardIDs = append(boardIDs, id)
-		boardNames = append(boardNames, fmt.Sprintf("%s (%s)", b.Name, id))
+	boardIDs := sortedBoardKeys(boards)
+	boardNames := make([]string, len(boardIDs))
+	for i, id := range boardIDs {
+		boardNames[i] = fmt.Sprintf("%s (%s)", boards[id].Name, id)
 	}
 	idx := pickNumbered(scanner, boardNames, "Select board variant:", 1)
 	cfg.Board = boardIDs[idx-1]
@@ -124,16 +128,13 @@ func wizardPico2(scanner *bufio.Scanner, projectDir string) *actions.Pico2Config
 	}
 
 	// Log.
-	logVal := true
-	if !confirmScanner(scanner, "Add monitor_filters (timestamp + log2file)?", true) {
-		logVal = false
-	}
+	logVal := confirmScanner(scanner, "Add monitor_filters (timestamp + log2file)?", true)
 	cfg.Log = &logVal
 
 	return cfg
 }
 
-func wizardSTM32(scanner *bufio.Scanner, projectDir string) *actions.STM32Config {
+func wizardSTM32(scanner *bufio.Scanner, projectDir string, result *wizardResult) *actions.STM32Config {
 	cfg := &actions.STM32Config{}
 
 	// Find .ioc files.
@@ -150,7 +151,9 @@ func wizardSTM32(scanner *bufio.Scanner, projectDir string) *actions.STM32Config
 	}
 
 	if len(iocFiles) == 0 {
-		fmt.Println("\n[WARNING] No .ioc file found. You can specify one with --ioc later.")
+		fmt.Println("\n[ERROR] No .ioc file found in project directory.")
+		fmt.Println("Create a CubeMX project first, then re-run pio-scaffold.")
+		return nil
 	} else if len(iocFiles) == 1 {
 		cfg.IOCPath = filepath.Join(dir, iocFiles[0])
 		fmt.Printf("\nFound .ioc file: %s\n", iocFiles[0])
@@ -164,8 +167,9 @@ func wizardSTM32(scanner *bufio.Scanner, projectDir string) *actions.STM32Config
 		data, err := os.ReadFile(cfg.IOCPath)
 		if err == nil {
 			if parsed, err := ioc.Parse(data); err == nil {
-				fmt.Printf("  MCU: %s  Board: generic%s  Family: stm32%sx\n",
+				result.detectedMCU = fmt.Sprintf("MCU: %s  Board: generic%s  Family: stm32%sx",
 					parsed.MCU, parsed.CleanMCU, parsed.Family)
+				fmt.Println("  " + result.detectedMCU)
 			}
 		}
 	}
@@ -173,20 +177,16 @@ func wizardSTM32(scanner *bufio.Scanner, projectDir string) *actions.STM32Config
 	// Debug probe.
 	reg := core.STM32Registry{}
 	probes := reg.DebugProbes()
-	probeIDs := make([]string, 0, len(probes))
-	probeNames := make([]string, 0, len(probes))
-	for id, p := range probes {
-		probeIDs = append(probeIDs, id)
-		probeNames = append(probeNames, p.Name)
+	probeIDs := sortedProbeKeys(probes)
+	probeNames := make([]string, len(probeIDs))
+	for i, id := range probeIDs {
+		probeNames[i] = probes[id].Name
 	}
 	idx := pickNumbered(scanner, probeNames, "Select debug probe:", 1)
 	cfg.Debug = probeIDs[idx-1]
 
 	// SWO.
-	swoVal := true
-	if !confirmScanner(scanner, "Generate SWO trace script?", true) {
-		swoVal = false
-	}
+	swoVal := confirmScanner(scanner, "Generate SWO trace script?", true)
 	cfg.SWO = &swoVal
 
 	// Baud.
@@ -196,10 +196,7 @@ func wizardSTM32(scanner *bufio.Scanner, projectDir string) *actions.STM32Config
 	}
 
 	// Log.
-	logVal := true
-	if !confirmScanner(scanner, "Add monitor_filters (timestamp + log2file)?", true) {
-		logVal = false
-	}
+	logVal := confirmScanner(scanner, "Add monitor_filters (timestamp + log2file)?", true)
 	cfg.Log = &logVal
 
 	return cfg
@@ -225,7 +222,9 @@ func printWizardSummary(r *wizardResult) {
 	case core.PlatformSTM32:
 		s := r.STM32
 		fmt.Printf("  Platform:   STM32 (CubeMX / CubeIDE)\n")
-		if s.IOCPath != "" {
+		if r.detectedMCU != "" {
+			fmt.Printf("  %s\n", r.detectedMCU)
+		} else if s.IOCPath != "" {
 			fmt.Printf("  .ioc file:  %s\n", filepath.Base(s.IOCPath))
 		} else {
 			fmt.Printf("  .ioc file:  none\n")
@@ -245,6 +244,23 @@ func printWizardSummary(r *wizardResult) {
 	}
 	fmt.Printf("  Git:        %v\n", r.Git)
 	fmt.Printf("  CI:         %v\n", r.CI)
+	// Show libraries if any were chosen.
+	hasLibs := false
+	switch r.Platform {
+	case core.PlatformPico2:
+		if r.Pico2 != nil && len(r.Pico2.Libs) > 0 {
+			fmt.Printf("  Libraries:  %s\n", strings.Join(r.Pico2.Libs, ", "))
+			hasLibs = true
+		}
+	case core.PlatformSTM32:
+		if r.STM32 != nil && len(r.STM32.Libs) > 0 {
+			fmt.Printf("  Libraries:  %s\n", strings.Join(r.STM32.Libs, ", "))
+			hasLibs = true
+		}
+	}
+	if hasLibs {
+		fmt.Println("[NOTE] Verify lib_deps names match the PlatformIO registry — typos will fail at build time")
+	}
 }
 
 // --- wizard-specific input helpers (scanner-based) ---

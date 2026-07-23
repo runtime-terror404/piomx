@@ -147,7 +147,7 @@ func newPresetsDeleteCommand() *cobra.Command {
 			if !force {
 				fmt.Printf("Delete preset %q? [y/N]: ", args[0])
 				var response string
-				fmt.Scanln(&response)
+				_, _ = fmt.Scanln(&response)
 				if response != "y" && response != "yes" {
 					fmt.Println("Aborted.")
 					return nil

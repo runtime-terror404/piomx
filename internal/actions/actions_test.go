@@ -36,7 +36,7 @@ func TestParseEnvList(t *testing.T) {
 		{"usb", []string{"usb"}},
 		{"dap", []string{"dap"}},
 		{"usb,dap", []string{"usb", "dap"}},
-		{"", []string{"usb", "dap"}},      // empty → default
+		{"", []string{"usb", "dap"}}, // empty → default
 		{"usb, invalid, dap", []string{"usb", "dap"}},
 	}
 
@@ -128,9 +128,9 @@ func TestScaffold_Pico2_ActualWrite(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Scaffold (second run): %v", err)
 	}
-	if len(result2.FilesSkipped) == 0 && len(result2.FilesWritten) > 0 {
-		// Second run without changes should see files as already matching.
-		// This is expected — no drift because we didn't edit anything.
+	// Second run without edits: files should be written (hash match, case 3).
+	if len(result2.FilesWritten) == 0 {
+		t.Error("second run should write files (hash match)")
 	}
 
 	_ = result

@@ -8,11 +8,11 @@ import (
 
 func TestParse_GoldenFixtures(t *testing.T) {
 	tests := []struct {
-		fixture       string
-		wantFamily    string
-		wantFallback  bool
-		wantCleanMCU  string
-		wantErr       bool
+		fixture      string
+		wantFamily   string
+		wantFallback bool
+		wantCleanMCU string
+		wantErr      bool
 	}{
 		{"f0_stm32f072.ioc", "f0", false, "STM32F072RB", false},
 		{"f1_stm32f103.ioc", "f1", false, "STM32F103C8", false},

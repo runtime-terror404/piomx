@@ -118,7 +118,8 @@ func TestGenerateINI_STM32(t *testing.T) {
 }
 
 // goldenTest is a helper for writing and comparing golden files.
-func goldenTest(t *testing.T, name string, content string) {
+// Currently unused but kept for future golden-file regression tests.
+func goldenTest(t *testing.T, name string, content string) { //nolint:unused
 	t.Helper()
 	goldenPath := filepath.Join("testdata", name)
 

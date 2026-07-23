@@ -7,8 +7,10 @@ import (
 	"path/filepath"
 )
 
-const presetsDirName = "pio-scaffold"
-const presetsFileName = "presets.json"
+const (
+	presetsDirName  = "pio-scaffold"
+	presetsFileName = "presets.json"
+)
 
 // PresetSummary is a lightweight view of a saved preset for listing.
 type PresetSummary struct {

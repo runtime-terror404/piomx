@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -17,6 +18,8 @@ func NewRootCommand() *cobra.Command {
 		projectDir string
 		dryRun     bool
 		yes        bool
+		force      bool
+		adopt      bool
 		name       string
 		preset     string
 	)
@@ -26,15 +29,15 @@ func NewRootCommand() *cobra.Command {
 		Short: "Unified PlatformIO project scaffolding CLI",
 		Long:  "pio-scaffold generates PlatformIO projects for Raspberry Pi Pico (RP2350/RP2040) and STM32 (CubeMX) platforms.",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// If a subcommand was invoked, cobra already dispatched it.
-			// This handler only runs for bare `pio-scaffold` (no subcommand).
-			return runWizardCLI(projectDir, name, dryRun, yes, preset)
+			return runWizardCLI(projectDir, name, dryRun, yes, force, adopt, preset)
 		},
 	}
 
 	root.PersistentFlags().StringVarP(&projectDir, "project-dir", "d", ".", "Target project directory")
 	root.PersistentFlags().BoolVarP(&dryRun, "dry-run", "n", false, "Preview files without writing")
 	root.PersistentFlags().BoolVarP(&yes, "yes", "y", false, "Skip confirmation prompts")
+	root.PersistentFlags().BoolVar(&force, "force", false, "Overwrite files even if drift detected")
+	root.PersistentFlags().BoolVar(&adopt, "adopt", false, "Create lock file for existing project without modifying content")
 	root.PersistentFlags().StringVar(&name, "name", "", "Project name (default: directory basename)")
 	root.PersistentFlags().StringVarP(&preset, "preset", "p", "", "Load configuration from a saved preset")
 
@@ -46,7 +49,7 @@ func NewRootCommand() *cobra.Command {
 }
 
 // runWizardCLI launches the interactive wizard and scaffolds the project.
-func runWizardCLI(projectDir, name string, dryRun, yes bool, presetName string) error {
+func runWizardCLI(projectDir, name string, dryRun, yes, force, adopt bool, presetName string) error {
 	wiz, err := runWizard(projectDir)
 	if err != nil {
 		return err
@@ -59,6 +62,8 @@ func runWizardCLI(projectDir, name string, dryRun, yes bool, presetName string) 
 		ProjectDir: projectDir,
 		Name:       name,
 		DryRun:     dryRun,
+		Force:      force,
+		Adopt:      adopt,
 		Git:        wiz.Git,
 		CI:         wiz.CI,
 	}
@@ -72,6 +77,10 @@ func runWizardCLI(projectDir, name string, dryRun, yes bool, presetName string) 
 
 	if presetName != "" {
 		applyPreset(&req, presetName)
+	}
+
+	if err := runPreFlight(&req, projectDir); err != nil {
+		return nil // user aborted
 	}
 
 	result, err := actions.Scaffold(context.Background(), req)
@@ -144,7 +153,6 @@ func actionVerb(dryRun bool) string {
 
 // applyPreset loads a preset and applies it to the request.
 func applyPreset(req *actions.ScaffoldRequest, name string) {
-	// Try as pico2 preset first, then stm32.
 	if p, err := actions.LoadPico2Preset(name); err == nil {
 		if req.Pico2 == nil {
 			req.Pico2 = &actions.Pico2Config{}
@@ -179,4 +187,84 @@ func applyPreset(req *actions.ScaffoldRequest, name string) {
 		return
 	}
 	fmt.Fprintf(os.Stderr, "Warning: preset %q not found\n", name)
+}
+
+// runPreFlight is the shared pre-flight logic for wizard and subcommands.
+func runPreFlight(req *actions.ScaffoldRequest, projectDir string) error {
+	// Platform mismatch check.
+	if oldPlatform, mismatch := actions.CheckPlatformMismatch(projectDir, req.Platform); mismatch {
+		fmt.Fprintf(os.Stderr, "\nWarning: This directory was previously scaffolded for %s.\n", oldPlatform)
+		fmt.Fprintf(os.Stderr, "Switching to %s may leave stale files behind.\n", req.Platform)
+		if req.Force || req.Adopt {
+			req.Force = true
+			return nil
+		}
+		fmt.Fprint(os.Stderr, "[F]orce overwrite  [N]o (abort)\n")
+		var choice string
+		_, _ = fmt.Scanln(&choice)
+		if strings.ToLower(strings.TrimSpace(choice)) == "f" {
+			if !confirmForceWarning(projectDir) {
+				fmt.Println("Aborted.")
+				return fmt.Errorf("aborted")
+			}
+			req.Force = true
+			return nil
+		}
+		fmt.Println("Aborted.")
+		return fmt.Errorf("aborted")
+	}
+
+	// Untracked/drift check.
+	if req.Force || req.Adopt {
+		return nil
+	}
+	preReq := *req
+	preReq.DryRun = true
+	preResult, err := actions.Scaffold(context.Background(), preReq)
+	if err != nil {
+		return err
+	}
+
+	if len(preResult.UntrackedFiles) > 0 || len(preResult.DriftFiles) > 0 {
+		fmt.Println()
+		if len(preResult.UntrackedFiles) > 0 {
+			fmt.Fprintf(os.Stderr, "Warning: existing untracked files in %s:\n", projectDir)
+			for _, f := range preResult.UntrackedFiles {
+				fmt.Fprintf(os.Stderr, "  %s\n", f)
+			}
+		}
+		if len(preResult.DriftFiles) > 0 {
+			fmt.Fprintf(os.Stderr, "Warning: files have been edited since generation:\n")
+			for path, summary := range preResult.DriftFiles {
+				fmt.Fprintf(os.Stderr, "  %s: %s\n", path, summary)
+			}
+		}
+		fmt.Fprint(os.Stderr, "\n[F]orce overwrite  [A]dopt (lock-file without changes)  [N]o (abort)\n")
+		var choice string
+		_, _ = fmt.Scanln(&choice)
+		switch strings.ToLower(strings.TrimSpace(choice)) {
+		case "f":
+			if !confirmForceWarning(projectDir) {
+				fmt.Println("Aborted.")
+				return fmt.Errorf("aborted")
+			}
+			req.Force = true
+		case "a":
+			req.Adopt = true
+		default:
+			fmt.Println("Aborted.")
+			return fmt.Errorf("aborted")
+		}
+	}
+	return nil
+}
+
+// confirmForceWarning shows a red final confirmation before --force nukes files.
+func confirmForceWarning(dir string) bool {
+	fmt.Fprintf(os.Stderr, "\n\033[31m⚠  --force will replace all generated files in %s.\n", dir)
+	fmt.Fprintf(os.Stderr, "\033[31mThis cannot be undone. Your edits will be lost.\n")
+	fmt.Fprintf(os.Stderr, "\033[0mContinue? [y/N]: ")
+	var confirm string
+	_, _ = fmt.Scanln(&confirm)
+	return strings.ToLower(strings.TrimSpace(confirm)) == "y"
 }
