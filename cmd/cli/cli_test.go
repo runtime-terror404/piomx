@@ -87,15 +87,12 @@ func TestSTM32_IOCFlag(t *testing.T) {
 }
 
 func TestWizard_NoSubcommand(t *testing.T) {
-	// Bare piomx should launch wizard, which fails in non-TTY.
-	// This test just verifies the command structure doesn't panic.
+	// Bare piomx with --help doesn't need stdin, just verifies command structure.
 	cmd := NewRootCommand()
-	cmd.SetArgs([]string{})
-	// Without a TTY, the wizard will fail on scanner input.
-	// This tests that the command is wired correctly.
-	err := cmd.Execute()
-	// Wizard panic/failure without TTY is expected; just ensure it doesn't segfault.
-	_ = err
+	cmd.SetArgs([]string{"--help"})
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("root --help: %v", err)
+	}
 }
 
 func TestPresetsSave_Pico2(t *testing.T) {
