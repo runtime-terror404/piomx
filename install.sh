@@ -1,14 +1,14 @@
 #!/bin/sh
 set -eu
 
-# pio-scaffold installer — downloads the latest release binary from GitHub.
+# piomx installer — downloads the latest release binary from GitHub.
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/runtime-terror404/pio-scaffold/main/install.sh | sh
+#   curl -fsSL https://raw.githubusercontent.com/runtime-terror404/piomx/main/install.sh | sh
 #   ./install.sh                # install or update
 #   ./install.sh --uninstall    # remove binary + optional config cleanup
 
-REPO="runtime-terror404/pio-scaffold"
-BIN_NAME="pio-scaffold"
+REPO="runtime-terror404/piomx"
+BIN_NAME="piomx"
 
 # ---- helpers ----
 
@@ -46,12 +46,12 @@ do_uninstall() {
     if [ -f "$BIN_PATH" ]; then
         echo "Removing $BIN_PATH"
         rm -f "$BIN_PATH"
-        echo "pio-scaffold uninstalled."
+        echo "piomx uninstalled."
     else
-        echo "pio-scaffold is not installed at $BIN_PATH"
+        echo "piomx is not installed at $BIN_PATH"
     fi
 
-    CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/pio-scaffold"
+    CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/piomx"
     if [ -d "$CONFIG_DIR" ]; then
         printf "Remove config at %s? [y/N]: " "$CONFIG_DIR"
         read -r answer
@@ -76,7 +76,7 @@ do_install() {
     echo "Fetching latest release for $OS/$ARCH..."
     RELEASE_URL=$(curl -fsSL "https://api.github.com/repos/$REPO/releases/latest" \
         | grep "browser_download_url" \
-        | grep "pio-scaffold_${OS}_${ARCH}" \
+        | grep "piomx_${OS}_${ARCH}" \
         | head -1 \
         | cut -d '"' -f 4)
 
@@ -106,7 +106,7 @@ do_install() {
     fi
 
     echo ""
-    echo "Done. Run 'pio-scaffold' to get started."
+    echo "Done. Run 'piomx' to get started."
 }
 
 # ---- main ----

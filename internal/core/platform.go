@@ -1,4 +1,4 @@
-// Package core defines the domain types for pio-scaffold: platforms, boards,
+// Package core defines the domain types for piomx: platforms, boards,
 // debug probes, and the registry interfaces that provide them.
 package core
 

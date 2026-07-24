@@ -8,11 +8,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/runtime-terror404/pio-scaffold/internal/core"
-	"github.com/runtime-terror404/pio-scaffold/internal/generate"
-	"github.com/runtime-terror404/pio-scaffold/internal/ioc"
-	"github.com/runtime-terror404/pio-scaffold/internal/lockfile"
-	"github.com/runtime-terror404/pio-scaffold/internal/writer"
+	"github.com/runtime-terror404/piomx/internal/core"
+	"github.com/runtime-terror404/piomx/internal/generate"
+	"github.com/runtime-terror404/piomx/internal/ioc"
+	"github.com/runtime-terror404/piomx/internal/lockfile"
+	"github.com/runtime-terror404/piomx/internal/writer"
 )
 
 // ScaffoldRequest holds all parameters for a scaffold operation.

@@ -1,6 +1,6 @@
 package generate
 
-import "github.com/runtime-terror404/pio-scaffold/internal/core"
+import "github.com/runtime-terror404/piomx/internal/core"
 
 // Config holds all the parameters needed to generate project files.
 // It unifies what was previously scattered across multiple config dict keys

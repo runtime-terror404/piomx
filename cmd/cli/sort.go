@@ -3,7 +3,7 @@ package main
 import (
 	"sort"
 
-	"github.com/runtime-terror404/pio-scaffold/internal/core"
+	"github.com/runtime-terror404/piomx/internal/core"
 )
 
 // sortedBoardKeys returns board IDs sorted alphabetically for consistent display.

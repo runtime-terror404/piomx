@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/runtime-terror404/pio-scaffold/internal/core"
+	"github.com/runtime-terror404/piomx/internal/core"
 )
 
 func TestGenerateSWOScript(t *testing.T) {

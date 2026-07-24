@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/runtime-terror404/pio-scaffold/internal/core"
+	"github.com/runtime-terror404/piomx/internal/core"
 )
 
 func TestGenerateINI_Pico2_Weact_Arduino(t *testing.T) {

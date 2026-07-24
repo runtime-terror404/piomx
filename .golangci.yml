@@ -15,15 +15,15 @@ linters:
           files:
             - "cmd/cli/**"
           deny:
-            - pkg: "github.com/runtime-terror404/pio-scaffold/internal/core"
+            - pkg: "github.com/runtime-terror404/piomx/internal/core"
               desc: "cmd/cli must go through internal/actions"
-            - pkg: "github.com/runtime-terror404/pio-scaffold/internal/ioc"
+            - pkg: "github.com/runtime-terror404/piomx/internal/ioc"
               desc: "cmd/cli must go through internal/actions"
-            - pkg: "github.com/runtime-terror404/pio-scaffold/internal/generate"
+            - pkg: "github.com/runtime-terror404/piomx/internal/generate"
               desc: "cmd/cli must go through internal/actions"
-            - pkg: "github.com/runtime-terror404/pio-scaffold/internal/writer"
+            - pkg: "github.com/runtime-terror404/piomx/internal/writer"
               desc: "cmd/cli must go through internal/actions"
-            - pkg: "github.com/runtime-terror404/pio-scaffold/internal/lockfile"
+            - pkg: "github.com/runtime-terror404/piomx/internal/lockfile"
               desc: "cmd/cli must go through internal/actions"
     forbidigo:
       analyze-types: true

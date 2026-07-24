@@ -6,8 +6,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/runtime-terror404/pio-scaffold/internal/actions"
-	"github.com/runtime-terror404/pio-scaffold/internal/core"
+	"github.com/runtime-terror404/piomx/internal/actions"
+	"github.com/runtime-terror404/piomx/internal/core"
 )
 
 func newSTM32Command() *cobra.Command {

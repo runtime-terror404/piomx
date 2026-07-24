@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/runtime-terror404/pio-scaffold/internal/core"
+	"github.com/runtime-terror404/piomx/internal/core"
 )
 
 // GenerateSWOScript returns the content of swo_trace.py for an STM32 project.

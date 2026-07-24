@@ -1,6 +1,6 @@
 package core
 
-import "github.com/runtime-terror404/pio-scaffold/internal/ioc"
+import "github.com/runtime-terror404/piomx/internal/ioc"
 
 // Registry holds fields genuinely shared by both platforms.
 type Registry interface {

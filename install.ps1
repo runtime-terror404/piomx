@@ -1,13 +1,13 @@
-# pio-scaffold installer for Windows — downloads the latest release binary.
+# piomx installer for Windows — downloads the latest release binary.
 # Usage:
-#   powershell -c "irm https://raw.githubusercontent.com/runtime-terror404/pio-scaffold/main/install.ps1 | iex"
+#   powershell -c "irm https://raw.githubusercontent.com/runtime-terror404/piomx/main/install.ps1 | iex"
 #   .\install.ps1                # install or update
 #   .\install.ps1 -Uninstall     # remove binary + optional config cleanup
 
 param([switch]$Uninstall)
 
-$Repo = "runtime-terror404/pio-scaffold"
-$BinName = "pio-scaffold.exe"
+$Repo = "runtime-terror404/piomx"
+$BinName = "piomx.exe"
 
 # ---- helpers ----
 
@@ -36,12 +36,12 @@ function Do-Uninstall {
 
     if (Test-Path $binPath) {
         Remove-Item $binPath -Force
-        Write-Host "pio-scaffold uninstalled."
+        Write-Host "piomx uninstalled."
     } else {
-        Write-Host "pio-scaffold is not installed at $binPath"
+        Write-Host "piomx is not installed at $binPath"
     }
 
-    $configDir = "$env:APPDATA\pio-scaffold"
+    $configDir = "$env:APPDATA\piomx"
     if (Test-Path $configDir) {
         $answer = Read-Host "Remove config at $configDir? [y/N]"
         if ($answer -eq 'y' -or $answer -eq 'Y') {
@@ -62,14 +62,14 @@ function Do-Install {
 
     $installDir = Get-InstallDir
     $binPath = Join-Path $installDir $BinName
-    $tmpDir = Join-Path $env:TEMP "pio-scaffold-install"
+    $tmpDir = Join-Path $env:TEMP "piomx-install"
     New-Item -ItemType Directory -Path $tmpDir -Force | Out-Null
 
     try {
         # Fetch latest release.
         Write-Host "Fetching latest release for $os/$arch..."
         $release = Invoke-RestMethod -Uri "https://api.github.com/repos/$Repo/releases/latest"
-        $asset = $release.assets | Where-Object { $_.name -like "pio-scaffold_${os}_${arch}*" } | Select-Object -First 1
+        $asset = $release.assets | Where-Object { $_.name -like "piomx_${os}_${arch}*" } | Select-Object -First 1
 
         if (-not $asset) {
             Write-Error "Could not find release for $os/$arch"
@@ -89,7 +89,7 @@ function Do-Install {
         Add-ToPath
 
         Write-Host ""
-        Write-Host "Done. Open a new terminal and run 'pio-scaffold' to get started."
+        Write-Host "Done. Open a new terminal and run 'piomx' to get started."
     } finally {
         Remove-Item $tmpDir -Recurse -Force -ErrorAction SilentlyContinue
     }

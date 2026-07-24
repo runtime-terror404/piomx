@@ -12,8 +12,8 @@ func TestNew_SetsSchemaVersion(t *testing.T) {
 	if lf.SchemaVersion != CurrentSchemaVersion {
 		t.Errorf("SchemaVersion = %d, want %d", lf.SchemaVersion, CurrentSchemaVersion)
 	}
-	if lf.Generator.Tool != "pio-scaffold" {
-		t.Errorf("Tool = %q, want 'pio-scaffold'", lf.Generator.Tool)
+	if lf.Generator.Tool != "piomx" {
+		t.Errorf("Tool = %q, want 'piomx'", lf.Generator.Tool)
 	}
 	if lf.Platform != "pico2" {
 		t.Errorf("Platform = %q, want 'pico2'", lf.Platform)

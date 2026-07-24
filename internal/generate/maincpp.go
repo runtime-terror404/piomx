@@ -3,7 +3,7 @@ package generate
 import (
 	"fmt"
 
-	"github.com/runtime-terror404/pio-scaffold/internal/core"
+	"github.com/runtime-terror404/piomx/internal/core"
 )
 
 // GenerateMainCPP returns the content of src/main.cpp. Only used for pico2 —

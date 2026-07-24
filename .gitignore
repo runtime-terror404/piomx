@@ -1,5 +1,5 @@
 # Go binary
-/pio-scaffold
+/piomx
 /dist/
 
 # Coverage
@@ -9,7 +9,7 @@ cover.out
 /test/
 
 # Prevent accidental root scaffold
-/.pio-scaffold.lock.yml
+/.piomx.lock.yml
 /platformio.ini
 /swo_trace.py
 /INSTRUCTIONS.md

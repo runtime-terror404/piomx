@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/runtime-terror404/pio-scaffold/internal/core"
+	"github.com/runtime-terror404/piomx/internal/core"
 )
 
 func TestCheckPIO(t *testing.T) {
@@ -113,7 +113,7 @@ func TestScaffold_Pico2_ActualWrite(t *testing.T) {
 	expectedFiles := []string{
 		"platformio.ini",
 		"src/main.cpp",
-		".pio-scaffold.lock.yml",
+		".piomx.lock.yml",
 	}
 
 	for _, f := range expectedFiles {

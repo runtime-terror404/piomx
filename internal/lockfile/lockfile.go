@@ -1,4 +1,4 @@
-// Package lockfile implements the per-project .pio-scaffold.lock.yml file —
+// Package lockfile implements the per-project .piomx.lock.yml file —
 // the mechanism that makes overwrite protection and drift detection possible.
 package lockfile
 
@@ -14,7 +14,7 @@ import (
 
 const (
 	// LockFileName is the name of the per-project lock file, sibling to platformio.ini.
-	LockFileName = ".pio-scaffold.lock.yml"
+	LockFileName = ".piomx.lock.yml"
 
 	// CurrentSchemaVersion is written into every new lock file.
 	CurrentSchemaVersion = 1
@@ -78,7 +78,7 @@ func New(platform string, cfg LockFileConfig) *LockFile {
 	return &LockFile{
 		SchemaVersion: CurrentSchemaVersion,
 		Generator: GeneratorInfo{
-			Tool:            "pio-scaffold",
+			Tool:            "piomx",
 			Version:         "0.2.0",
 			GeneratedAtUnix: time.Now().Unix(),
 		},

@@ -1,4 +1,4 @@
-module github.com/runtime-terror404/pio-scaffold
+module github.com/runtime-terror404/piomx
 
 go 1.26.5
 

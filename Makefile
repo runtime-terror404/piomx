@@ -1,7 +1,7 @@
-# pio-scaffold Go refactor
+# piomx Go refactor
 
-BINARY = pio-scaffold
-MODULE = github.com/runtime-terror404/pio-scaffold
+BINARY = piomx
+MODULE = github.com/runtime-terror404/piomx
 
 .PHONY: build test lint cover install clean
 

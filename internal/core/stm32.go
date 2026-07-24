@@ -3,7 +3,7 @@ package core
 import (
 	"fmt"
 
-	"github.com/runtime-terror404/pio-scaffold/internal/ioc"
+	"github.com/runtime-terror404/piomx/internal/ioc"
 )
 
 // STM32Registry implements IOCDerivedRegistry for the STM32 (CubeMX / CubeIDE) platform.

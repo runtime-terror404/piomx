@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	presetsDirName  = "pio-scaffold"
+	presetsDirName  = "piomx"
 	presetsFileName = "presets.json"
 )
 

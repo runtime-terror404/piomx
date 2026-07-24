@@ -8,9 +8,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/runtime-terror404/pio-scaffold/internal/actions"
-	"github.com/runtime-terror404/pio-scaffold/internal/core"
-	"github.com/runtime-terror404/pio-scaffold/internal/ioc"
+	"github.com/runtime-terror404/piomx/internal/actions"
+	"github.com/runtime-terror404/piomx/internal/core"
+	"github.com/runtime-terror404/piomx/internal/ioc"
 )
 
 // wizardResult holds the output of the interactive wizard.
@@ -27,7 +27,7 @@ type wizardResult struct {
 func runWizard(projectDir string) (*wizardResult, error) {
 	scanner := bufio.NewScanner(os.Stdin)
 
-	fmt.Println("=== pio-scaffold interactive wizard ===")
+	fmt.Println("=== piomx interactive wizard ===")
 
 	// Platform selection.
 	platforms := []string{"pico2", "stm32"}
@@ -152,7 +152,7 @@ func wizardSTM32(scanner *bufio.Scanner, projectDir string, result *wizardResult
 
 	if len(iocFiles) == 0 {
 		fmt.Println("\n[ERROR] No .ioc file found in project directory.")
-		fmt.Println("Create a CubeMX project first, then re-run pio-scaffold.")
+		fmt.Println("Create a CubeMX project first, then re-run piomx.")
 		return nil
 	} else if len(iocFiles) == 1 {
 		cfg.IOCPath = filepath.Join(dir, iocFiles[0])

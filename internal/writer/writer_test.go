@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/runtime-terror404/pio-scaffold/internal/lockfile"
+	"github.com/runtime-terror404/piomx/internal/lockfile"
 )
 
 func TestPlan_Case1_FileDoesNotExist(t *testing.T) {
@@ -181,7 +181,7 @@ func TestApply_SkipsNonWriteDecisions(t *testing.T) {
 func TestAdopt(t *testing.T) {
 	dir := t.TempDir()
 
-	// Write an existing file that was NOT created by pio-scaffold.
+	// Write an existing file that was NOT created by piomx.
 	content := []byte("[env]\nboard = custom\n")
 	if err := os.WriteFile(filepath.Join(dir, "platformio.ini"), content, 0o644); err != nil {
 		t.Fatal(err)

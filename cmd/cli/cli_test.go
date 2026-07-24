@@ -85,7 +85,7 @@ func TestSTM32_IOCFlag(t *testing.T) {
 }
 
 func TestWizard_NoSubcommand(t *testing.T) {
-	// Bare pio-scaffold should launch wizard, which fails in non-TTY.
+	// Bare piomx should launch wizard, which fails in non-TTY.
 	// This test just verifies the command structure doesn't panic.
 	cmd := NewRootCommand()
 	cmd.SetArgs([]string{})
@@ -108,7 +108,7 @@ func TestPresetsSave_Pico2(t *testing.T) {
 	}
 
 	// Verify the file exists and has correct content.
-	data, err := os.ReadFile(dir + "/pio-scaffold/presets.json")
+	data, err := os.ReadFile(dir + "/piomx/presets.json")
 	if err != nil {
 		t.Fatalf("read presets file: %v", err)
 	}

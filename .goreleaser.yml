@@ -1,13 +1,13 @@
-# Goreleaser configuration for pio-scaffold.
+# Goreleaser configuration for piomx.
 # Triggered by: git tag vX.Y.Z && git push --tags
 # Requires: GITHUB_TOKEN in CI environment.
 
 version: 2
 
 builds:
-  - id: pio-scaffold
+  - id: piomx
     main: ./cmd/cli
-    binary: pio-scaffold
+    binary: piomx
     goos:
       - linux
       - darwin
@@ -26,7 +26,7 @@ builds:
 
 archives:
   - formats: [tar.gz]
-    name_template: "pio-scaffold_{{ .Os }}_{{ .Arch }}"
+    name_template: "piomx_{{ .Os }}_{{ .Arch }}"
     files:
       - LICENSE
       - README.md
@@ -39,7 +39,7 @@ release:
   footer: |
     **Install**
     ```sh
-    curl -fsSL https://raw.githubusercontent.com/runtime-terror404/pio-scaffold/main/install.sh | sh
+    curl -fsSL https://raw.githubusercontent.com/runtime-terror404/piomx/main/install.sh | sh
     ```
 
 changelog:

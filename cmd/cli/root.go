@@ -9,7 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/runtime-terror404/pio-scaffold/internal/actions"
+	"github.com/runtime-terror404/piomx/internal/actions"
 )
 
 // version is set at build time via -ldflags="-X main.version=X.Y.Z".
@@ -28,9 +28,9 @@ func NewRootCommand() *cobra.Command {
 	)
 
 	root := &cobra.Command{
-		Use:     "pio-scaffold",
+		Use:     "piomx",
 		Short:   "Unified PlatformIO project scaffolding CLI",
-		Long:    "pio-scaffold generates PlatformIO projects for Raspberry Pi Pico (RP2350/RP2040) and STM32 (CubeMX) platforms.",
+		Long:    "piomx generates PlatformIO projects for Raspberry Pi Pico (RP2350/RP2040) and STM32 (CubeMX) platforms.",
 		Version: version,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return runWizardCLI(projectDir, name, dryRun, yes, force, adopt, preset)

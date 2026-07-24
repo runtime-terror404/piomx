@@ -1,8 +1,8 @@
 package actions
 
 import (
-	"github.com/runtime-terror404/pio-scaffold/internal/core"
-	"github.com/runtime-terror404/pio-scaffold/internal/lockfile"
+	"github.com/runtime-terror404/piomx/internal/core"
+	"github.com/runtime-terror404/piomx/internal/lockfile"
 )
 
 // CheckPlatformMismatch returns the old platform name if the project directory

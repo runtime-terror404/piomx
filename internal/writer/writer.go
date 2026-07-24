@@ -12,7 +12,7 @@ import (
 
 	"github.com/sergi/go-diff/diffmatchpatch"
 
-	"github.com/runtime-terror404/pio-scaffold/internal/lockfile"
+	"github.com/runtime-terror404/piomx/internal/lockfile"
 )
 
 // WriteDecision represents the outcome of planning a file write.

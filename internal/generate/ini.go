@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/runtime-terror404/pio-scaffold/internal/core"
+	"github.com/runtime-terror404/piomx/internal/core"
 )
 
 // GenerateINI produces the content of platformio.ini for the given config.

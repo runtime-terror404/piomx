@@ -7,7 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/runtime-terror404/pio-scaffold/internal/actions"
+	"github.com/runtime-terror404/piomx/internal/actions"
 )
 
 func newPresetsCommand() *cobra.Command {
