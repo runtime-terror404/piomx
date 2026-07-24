@@ -65,6 +65,9 @@ func TestPico2_DryRun(t *testing.T) {
 	cmd := NewRootCommand()
 	cmd.SetArgs([]string{"pico2", "--board", "weact", "-n", "-d", dir})
 	if err := cmd.Execute(); err != nil {
+		if strings.Contains(err.Error(), "'pio' command") {
+			t.Skip("pio not installed, skipping")
+		}
 		t.Fatalf("pico2 --dry-run: %v", err)
 	}
 	// Dry-run should NOT create files.
