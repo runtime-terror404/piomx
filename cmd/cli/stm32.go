@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 
@@ -33,7 +34,6 @@ func newSTM32Command() *cobra.Command {
 			}
 
 			swoSetting := triStateBool(cmd, "swo", "no-swo")
-
 			logSetting := triStateBool(cmd, "log", "no-log")
 
 			libList, err := parseLibs(libs)
@@ -78,7 +78,7 @@ func newSTM32Command() *cobra.Command {
 			}
 
 			if err := runPreFlight(&req, req.ProjectDir); err != nil {
-				return nil
+				fmt.Fprintf(os.Stderr, "Warning: pre-flight check failed: %v\n", err)
 			}
 
 			result, err := actions.Scaffold(context.Background(), req)

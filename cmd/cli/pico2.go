@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 
@@ -73,7 +74,7 @@ func newPico2Command() *cobra.Command {
 			}
 
 			if err := runPreFlight(&req, req.ProjectDir); err != nil {
-				return nil
+				fmt.Fprintf(os.Stderr, "Warning: pre-flight check failed: %v\n", err)
 			}
 
 			result, err := actions.Scaffold(context.Background(), req)

@@ -50,9 +50,11 @@ func TestSTM32_NoIOC(t *testing.T) {
 	cmd := NewRootCommand()
 	cmd.SetArgs([]string{"stm32", "--yes", "-d", dir})
 	if err := cmd.Execute(); err != nil {
+		if strings.Contains(err.Error(), "'pio' command") {
+			t.Skip("pio not installed, skipping")
+		}
 		t.Fatalf("stm32 --yes: %v", err)
 	}
-	// Should generate platformio.ini and swo_trace.py with defaults.
 	if _, err := os.Stat(dir + "/platformio.ini"); os.IsNotExist(err) {
 		t.Error("expected platformio.ini to be created")
 	}
