@@ -24,7 +24,7 @@ builds:
       - -X main.version={{ .Version }}
 
 archives:
-  - formats: [tar.gz]
+  - format: tar.gz
     name_template: "piomx_{{ .Os }}_{{ .Arch }}"
     files:
       - LICENSE
