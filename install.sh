@@ -86,8 +86,9 @@ do_install() {
     fi
 
     echo "Downloading $RELEASE_URL ..."
-    curl -fsSL "$RELEASE_URL" -o "$TMP_DIR/$BIN_NAME"
+    curl -fsSL "$RELEASE_URL" -o "$TMP_DIR/$BIN_NAME.tar.gz"
 
+	tar -xzf "$TMP_DIR/$BIN_NAME.tar.gz" -C "$TMP_DIR"
     chmod +x "$TMP_DIR/$BIN_NAME"
 
     if [ -f "$BIN_PATH" ]; then
