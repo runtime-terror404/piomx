@@ -3,9 +3,9 @@
 ---
 
 <p align="center">
-  <a href="https://github.com/runtime-terror404/piomx/actions"><img src="https://img.shields.io/github/actions/workflow/status/runtime-terror404/piomx/release.yml?branch=main" alt="CI"></a>
-  <a href="https://github.com/runtime-terror404/piomx/releases"><img src="https://img.shields.io/github/v/release/runtime-terror404/piomx?include_prereleases" alt="Release"></a>
-  <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License: MIT"></a>
+  <a href="https://github.com/runtime-terror404/piomx/actions/workflows/release.yml"><img src="https://github.com/runtime-terror404/piomx/actions/workflows/release.yml/badge.svg" alt="CI" style="margin: 0 10px;"></a>
+  <a href="https://github.com/runtime-terror404/piomx/releases"><img src="https://img.shields.io/github/v/release/runtime-terror404/piomx" alt="Release" style="margin: 0 10px;"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/runtime-terror404/piomx" alt="License" style="margin: 0 10px;"></a>
 </p>
 
 **The bridge between PlatformIO and the boards it leaves behind.**
