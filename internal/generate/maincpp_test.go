@@ -90,41 +90,9 @@ func TestGenerateMainCPP_Pico2_PicoSDK(t *testing.T) {
 	}
 }
 
-func TestGenerateMainCPP_STM32(t *testing.T) {
-	cfg := Config{
-		Platform:  core.PlatformSTM32,
-		MCUFamily: "f4",
-	}
-
-	result, err := GenerateMainCPP(core.PlatformSTM32, cfg)
-	if err != nil {
-		t.Fatalf("GenerateMainCPP: %v", err)
-	}
-
-	checks := []string{
-		"#include \"stm32f4xx_hal.h\"",
-		"HAL_Init()",
-	}
-
-	for _, check := range checks {
-		if !strings.Contains(result, check) {
-			t.Errorf("expected main.cpp to contain %q", check)
-		}
-	}
-}
-
-func TestGenerateMainCPP_STM32_F7(t *testing.T) {
-	cfg := Config{
-		Platform:  core.PlatformSTM32,
-		MCUFamily: "f7",
-	}
-
-	result, err := GenerateMainCPP(core.PlatformSTM32, cfg)
-	if err != nil {
-		t.Fatalf("GenerateMainCPP: %v", err)
-	}
-
-	if !strings.Contains(result, "#include \"stm32f7xx_hal.h\"") {
-		t.Error("expected #include \"stm32f7xx_hal.h\"")
+func TestGenerateMainCPP_UnsupportedPlatform(t *testing.T) {
+	_, err := GenerateMainCPP(core.PlatformSTM32, Config{})
+	if err == nil {
+		t.Error("expected error for STM32 (unsupported platform)")
 	}
 }

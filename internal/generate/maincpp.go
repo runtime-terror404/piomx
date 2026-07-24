@@ -6,19 +6,14 @@ import (
 	"github.com/runtime-terror404/pio-scaffold/internal/core"
 )
 
-// GenerateMainCPP returns the content of src/main.cpp for the given platform.
-// STM32 returns its HAL template even though the file is only written for pico2
-// (matching the Python behavior — the STM32 entry point is CubeMX sources in
-// Core/Src, not a generated stub).
+// GenerateMainCPP returns the content of src/main.cpp. Only used for pico2 —
+// STM32 projects use CubeMX-generated sources in Core/Src and do not get a
+// generated stub.
 func GenerateMainCPP(platform core.PlatformKey, cfg Config) (string, error) {
-	switch platform {
-	case core.PlatformPico2:
-		return generatePico2CPP(cfg)
-	case core.PlatformSTM32:
-		return generateSTM32CPP(cfg)
-	default:
-		return "", fmt.Errorf("unsupported platform: %s", platform)
+	if platform != core.PlatformPico2 {
+		return "", fmt.Errorf("GenerateMainCPP: unsupported platform %s (only pico2 generates src/main.cpp)", platform)
 	}
+	return generatePico2CPP(cfg)
 }
 
 func generatePico2CPP(cfg Config) (string, error) {
@@ -62,15 +57,4 @@ void setup1() {
 void loop1() {
 }
 `, coreName, coreName), nil
-}
-
-func generateSTM32CPP(cfg Config) (string, error) {
-	return fmt.Sprintf(`#include "stm32%sxx_hal.h"
-
-int main(void) {
-    HAL_Init();
-    while (1) {
-    }
-}
-`, cfg.MCUFamily), nil
 }

@@ -12,6 +12,9 @@ import (
 	"github.com/runtime-terror404/pio-scaffold/internal/actions"
 )
 
+// version is set at build time via -ldflags="-X main.version=X.Y.Z".
+var version = "0.2.0-dev"
+
 // NewRootCommand creates the cobra root command with all subcommands wired in.
 func NewRootCommand() *cobra.Command {
 	var (
@@ -25,9 +28,10 @@ func NewRootCommand() *cobra.Command {
 	)
 
 	root := &cobra.Command{
-		Use:   "pio-scaffold",
-		Short: "Unified PlatformIO project scaffolding CLI",
-		Long:  "pio-scaffold generates PlatformIO projects for Raspberry Pi Pico (RP2350/RP2040) and STM32 (CubeMX) platforms.",
+		Use:     "pio-scaffold",
+		Short:   "Unified PlatformIO project scaffolding CLI",
+		Long:    "pio-scaffold generates PlatformIO projects for Raspberry Pi Pico (RP2350/RP2040) and STM32 (CubeMX) platforms.",
+		Version: version,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return runWizardCLI(projectDir, name, dryRun, yes, force, adopt, preset)
 		},
@@ -48,7 +52,6 @@ func NewRootCommand() *cobra.Command {
 	return root
 }
 
-// runWizardCLI launches the interactive wizard and scaffolds the project.
 func runWizardCLI(projectDir, name string, dryRun, yes, force, adopt bool, presetName string) error {
 	wiz, err := runWizard(projectDir)
 	if err != nil {
@@ -80,7 +83,7 @@ func runWizardCLI(projectDir, name string, dryRun, yes, force, adopt bool, prese
 	}
 
 	if err := runPreFlight(&req, projectDir); err != nil {
-		return nil // user aborted
+		return nil
 	}
 
 	result, err := actions.Scaffold(context.Background(), req)
@@ -91,7 +94,6 @@ func runWizardCLI(projectDir, name string, dryRun, yes, force, adopt bool, prese
 	return nil
 }
 
-// printResult prints the scaffold result to stdout.
 func printResult(result actions.ScaffoldResult, dryRun bool) {
 	if dryRun {
 		fmt.Println("\n=== DRY RUN — no files were written ===")
@@ -151,7 +153,6 @@ func actionVerb(dryRun bool) string {
 	return "Created"
 }
 
-// applyPreset loads a preset and applies it to the request.
 func applyPreset(req *actions.ScaffoldRequest, name string) {
 	if p, err := actions.LoadPico2Preset(name); err == nil {
 		if req.Pico2 == nil {
@@ -189,9 +190,7 @@ func applyPreset(req *actions.ScaffoldRequest, name string) {
 	fmt.Fprintf(os.Stderr, "Warning: preset %q not found\n", name)
 }
 
-// runPreFlight is the shared pre-flight logic for wizard and subcommands.
 func runPreFlight(req *actions.ScaffoldRequest, projectDir string) error {
-	// Platform mismatch check.
 	if oldPlatform, mismatch := actions.CheckPlatformMismatch(projectDir, req.Platform); mismatch {
 		fmt.Fprintf(os.Stderr, "\nWarning: This directory was previously scaffolded for %s.\n", oldPlatform)
 		fmt.Fprintf(os.Stderr, "Switching to %s may leave stale files behind.\n", req.Platform)
@@ -214,7 +213,6 @@ func runPreFlight(req *actions.ScaffoldRequest, projectDir string) error {
 		return fmt.Errorf("aborted")
 	}
 
-	// Untracked/drift check.
 	if req.Force || req.Adopt {
 		return nil
 	}
@@ -259,7 +257,6 @@ func runPreFlight(req *actions.ScaffoldRequest, projectDir string) error {
 	return nil
 }
 
-// confirmForceWarning shows a red final confirmation before --force nukes files.
 func confirmForceWarning(dir string) bool {
 	fmt.Fprintf(os.Stderr, "\n\033[31m⚠  --force will replace all generated files in %s.\n", dir)
 	fmt.Fprintf(os.Stderr, "\033[31mThis cannot be undone. Your edits will be lost.\n")

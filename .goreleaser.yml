@@ -1,0 +1,50 @@
+# Goreleaser configuration for pio-scaffold.
+# Triggered by: git tag vX.Y.Z && git push --tags
+# Requires: GITHUB_TOKEN in CI environment.
+
+version: 2
+
+builds:
+  - id: pio-scaffold
+    main: ./cmd/cli
+    binary: pio-scaffold
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    env:
+      - CGO_ENABLED=0
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w
+      - -X main.version={{ .Version }}
+
+archives:
+  - formats: [tar.gz]
+    name_template: "pio-scaffold_{{ .Os }}_{{ .Arch }}"
+    files:
+      - LICENSE
+      - README.md
+
+checksum:
+  name_template: checksums.txt
+
+release:
+  prerelease: auto
+  footer: |
+    **Install**
+    ```sh
+    curl -fsSL https://raw.githubusercontent.com/runtime-terror404/pio-scaffold/main/install.sh | sh
+    ```
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - Merge pull request
+      - Merge branch
