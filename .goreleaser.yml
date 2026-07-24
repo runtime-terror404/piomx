@@ -1,8 +1,7 @@
 # Goreleaser configuration for piomx.
 # Triggered by: git tag vX.Y.Z && git push --tags
-# Requires: GITHUB_TOKEN in CI environment.
 
-version: 2
+version: 1
 
 builds:
   - id: piomx
