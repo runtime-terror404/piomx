@@ -69,7 +69,7 @@ function Do-Install {
         # Fetch latest release.
         Write-Host "Fetching latest release for $os/$arch..."
         $release = Invoke-RestMethod -Uri "https://api.github.com/repos/$Repo/releases/latest"
-        $asset = $release.assets | Where-Object { $_.name -like "piomx_${os}_${arch}*" } | Select-Object -First 1
+        $asset = $release.assets | Where-Object { $_.name -like "piomx_${os}_${arch}.zip*" } | Select-Object -First 1
 
         if (-not $asset) {
             Write-Error "Could not find release for $os/$arch"
@@ -77,7 +77,9 @@ function Do-Install {
         }
 
         Write-Host "Downloading $($asset.name)..."
-        Invoke-WebRequest -Uri $asset.browser_download_url -OutFile "$tmpDir\$BinName"
+        $archivePath = "$tmpDir\$BinName.zip"
+        Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $archivePath
+        Expand-Archive -Path $archivePath -DestinationPath $tmpDir -Force
 
         if (Test-Path $binPath) {
             Write-Host "Replacing existing installation at $binPath"
@@ -85,8 +87,6 @@ function Do-Install {
 
         Move-Item "$tmpDir\$BinName" $binPath -Force
         Write-Host "Installed $BinName to $binPath"
-
-        Add-ToPath
 
         Write-Host ""
         Write-Host "Done. Open a new terminal and run 'piomx' to get started."

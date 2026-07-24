@@ -25,6 +25,9 @@ builds:
 
 archives:
   - format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
     name_template: "piomx_{{ .Os }}_{{ .Arch }}"
     files:
       - LICENSE
